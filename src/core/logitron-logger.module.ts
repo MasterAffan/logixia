@@ -1,44 +1,44 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod, ModuleMetadata, Type, InjectionToken, OptionalFactoryDependency } from '@nestjs/common';
 import { RouteInfo } from '@nestjs/common/interfaces/middleware/middleware-configuration.interface';
 import { LoggerConfig, TraceIdConfig } from '../types';
-import { LogitronLoggerService } from './logitron-nestjs.service';
+import { LogixiaLoggerService } from './logitron-nestjs.service';
 import { TraceMiddleware, traceMiddleware } from './trace.middleware';
 import { NextFunction, Request, Response } from 'express';
 
 const DEFAULT_ROUTES: RouteInfo[] = [{ path: '*', method: RequestMethod.ALL }];
 
 // Constants for provider tokens
-export const LOGITRON_LOGGER_CONFIG = 'LOGITRON_LOGGER_CONFIG';
-export const LOGITRON_LOGGER_PREFIX = 'LOGITRON_LOGGER_';
+export const LOGIXIA_LOGGER_CONFIG = 'LOGIXIA_LOGGER_CONFIG';
+export const LOGIXIA_LOGGER_PREFIX = 'LOGIXIA_LOGGER_';
 
 // Export the service for external use
-export { LogitronLoggerService } from './logitron-nestjs.service';
+export { LogixiaLoggerService } from './logitron-nestjs.service';
 
 // Interface for module configuration
-interface LogitronModuleConfig {
+interface LogixiaModuleConfig {
   forRoutes?: RouteInfo[];
   exclude?: RouteInfo[];
 }
 
 // Interface for async configuration
-export interface LogitronAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-  useExisting?: Type<LogitronOptionsFactory>;
-  useClass?: Type<LogitronOptionsFactory>;
+export interface LogixiaAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+  useExisting?: Type<LogixiaOptionsFactory>;
+  useClass?: Type<LogixiaOptionsFactory>;
   useFactory?: (...args: any[]) => Promise<Partial<LoggerConfig>> | Partial<LoggerConfig>;
   inject?: Array<InjectionToken | OptionalFactoryDependency>;
 }
 
 // Interface for options factory
-export interface LogitronOptionsFactory {
-  createLogitronOptions(): Promise<Partial<LoggerConfig>> | Partial<LoggerConfig>;
+export interface LogixiaOptionsFactory {
+  createLogixiaOptions(): Promise<Partial<LoggerConfig>> | Partial<LoggerConfig>;
 }
 
 /**
- * Logitron Logger Module for NestJS dependency injection
+ * Logixia Logger Module for NestJS dependency injection
  */
 @Module({})
-export class LogitronLoggerModule implements NestModule {
-  private config: LogitronModuleConfig = {};
+export class LogixiaLoggerModule implements NestModule {
+  private config: LogixiaModuleConfig = {};
   private static loggerConfig: Partial<LoggerConfig> = {};
 
   configure(consumer: MiddlewareConsumer) {
@@ -48,9 +48,9 @@ export class LogitronLoggerModule implements NestModule {
     const middlewareConfig = (req: Request, res: Response, next: NextFunction) => {
       let traceConfig: TraceIdConfig | undefined;
       
-      if (typeof LogitronLoggerModule.loggerConfig.traceId === 'object') {
-        traceConfig = LogitronLoggerModule.loggerConfig.traceId as TraceIdConfig;
-      } else if (LogitronLoggerModule.loggerConfig.traceId === true) {
+      if (typeof LogixiaLoggerModule.loggerConfig.traceId === 'object') {
+        traceConfig = LogixiaLoggerModule.loggerConfig.traceId as TraceIdConfig;
+      } else if (LogixiaLoggerModule.loggerConfig.traceId === true) {
         // Default configuration when traceId is simply true
         traceConfig = {
           enabled: true,
@@ -84,17 +84,17 @@ export class LogitronLoggerModule implements NestModule {
    */
   static forRoot(config?: Partial<LoggerConfig>) {
     // Store config for middleware access
-    LogitronLoggerModule.loggerConfig = config || {};
+    LogixiaLoggerModule.loggerConfig = config || {};
     
     return {
-      module: LogitronLoggerModule,
+      module: LogixiaLoggerModule,
       providers: [
         {
-          provide: LOGITRON_LOGGER_CONFIG,
+          provide: LOGIXIA_LOGGER_CONFIG,
           useValue: config || {},
         },
         {
-          provide: LogitronLoggerService,
+          provide: LogixiaLoggerService,
           useFactory: (loggerConfig: Partial<LoggerConfig>) => {
             const defaultConfig: LoggerConfig = {
               level: 'info',
@@ -122,12 +122,12 @@ export class LogitronLoggerModule implements NestModule {
             },
               ...loggerConfig
             };
-            return new LogitronLoggerService(defaultConfig);
+            return new LogixiaLoggerService(defaultConfig);
           },
-          inject: [LOGITRON_LOGGER_CONFIG],
+          inject: [LOGIXIA_LOGGER_CONFIG],
         },
       ],
-      exports: [LogitronLoggerService, LOGITRON_LOGGER_CONFIG],
+      exports: [LogixiaLoggerService, LOGIXIA_LOGGER_CONFIG],
       global: true,
     };
   }
@@ -135,14 +135,14 @@ export class LogitronLoggerModule implements NestModule {
   /**
    * Configure the module with asynchronous options
    */
-  static forRootAsync(options: LogitronAsyncOptions) {
+  static forRootAsync(options: LogixiaAsyncOptions) {
     return {
-      module: LogitronLoggerModule,
+      module: LogixiaLoggerModule,
       imports: options.imports || [],
       providers: [
         ...this.createAsyncProviders(options),
         {
-          provide: LogitronLoggerService,
+          provide: LogixiaLoggerService,
           useFactory: (loggerConfig: Partial<LoggerConfig>) => {
             const defaultConfig: LoggerConfig = {
               level: 'info',
@@ -171,13 +171,13 @@ export class LogitronLoggerModule implements NestModule {
               ...loggerConfig
             };
             // Store config for middleware access
-            LogitronLoggerModule.loggerConfig = defaultConfig;
-            return new LogitronLoggerService(defaultConfig);
+            LogixiaLoggerModule.loggerConfig = defaultConfig;
+            return new LogixiaLoggerService(defaultConfig);
           },
-          inject: [LOGITRON_LOGGER_CONFIG],
+          inject: [LOGIXIA_LOGGER_CONFIG],
         },
       ],
-      exports: [LogitronLoggerService, LOGITRON_LOGGER_CONFIG],
+      exports: [LogixiaLoggerService, LOGIXIA_LOGGER_CONFIG],
       global: true,
     };
   }
@@ -186,23 +186,23 @@ export class LogitronLoggerModule implements NestModule {
    * Create feature-specific logger instances
    */
   static forFeature(context: string) {
-    const providerToken = `${LOGITRON_LOGGER_PREFIX}${context.toUpperCase()}`;
+    const providerToken = `${LOGIXIA_LOGGER_PREFIX}${context.toUpperCase()}`;
     return {
-      module: LogitronLoggerModule,
+      module: LogixiaLoggerModule,
       providers: [
         {
           provide: providerToken,
-          useFactory: (baseLogger: LogitronLoggerService) => {
+          useFactory: (baseLogger: LogixiaLoggerService) => {
             return baseLogger.child(context);
           },
-          inject: [LogitronLoggerService],
+          inject: [LogixiaLoggerService],
         },
       ],
       exports: [providerToken],
     };
   }
 
-  private static createAsyncProviders(options: LogitronAsyncOptions) {
+  private static createAsyncProviders(options: LogixiaAsyncOptions) {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -215,18 +215,18 @@ export class LogitronLoggerModule implements NestModule {
     ];
   }
 
-  private static createAsyncOptionsProvider(options: LogitronAsyncOptions) {
+  private static createAsyncOptionsProvider(options: LogixiaAsyncOptions) {
     if (options.useFactory) {
       return {
-        provide: LOGITRON_LOGGER_CONFIG,
+        provide: LOGIXIA_LOGGER_CONFIG,
         useFactory: options.useFactory,
         inject: options.inject || [],
       };
     }
     return {
-      provide: LOGITRON_LOGGER_CONFIG,
-      useFactory: async (optionsFactory: LogitronOptionsFactory) =>
-        await optionsFactory.createLogitronOptions(),
+      provide: LOGIXIA_LOGGER_CONFIG,
+      useFactory: async (optionsFactory: LogixiaOptionsFactory) =>
+        await optionsFactory.createLogixiaOptions(),
       inject: [options.useExisting || options.useClass!],
     };
   }

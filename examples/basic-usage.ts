@@ -1,5 +1,5 @@
 /**
- * Basic usage example of Logitron library
+ * Basic usage example of Logixia library
  */
 
 import { createLogger, LogLevel } from '../src';

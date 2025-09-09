@@ -9,8 +9,8 @@
  * - Customizable log levels and colors
  */
 
-import { LogitronLogger, createLogger as createLoggerFromCore } from './core/logitron-logger';
-import { LogitronLoggerService } from './core/logitron-nestjs.service';
+import { LogixiaLogger, createLogger as createLoggerFromCore } from './core/logitron-logger';
+import { LogixiaLoggerService } from './core/logitron-nestjs.service';
 import { LoggerConfig, LogLevel, LogColor, Environment } from './types';
 
 // Type exports
@@ -22,7 +22,7 @@ export * from './utils/trace.utils';
 export * from './utils/error.utils';
 
 // Core exports
-export { LogitronLogger, LogitronLoggerService, DEFAULT_CONFIG };
+export { LogixiaLogger, LogixiaLoggerService, DEFAULT_CONFIG };
 
 /**
  * Default configuration for Logitron logger
@@ -78,16 +78,16 @@ export const createLogger = createLoggerFromCore;
 /**
  * Create a new Logitron logger service for NestJS
  * @param config - Logger configuration
- * @returns LogitronLoggerService instance
+ * @returns LogixiaLoggerService instance
  */
-export function createLoggerService(config?: Partial<LoggerConfig>): LogitronLoggerService {
-  return new LogitronLoggerService({ ...DEFAULT_CONFIG, ...config });
+export function createLoggerService(config?: Partial<LoggerConfig>): LogixiaLoggerService {
+  return new LogixiaLoggerService({ ...DEFAULT_CONFIG, ...config });
 }
 
 /**
  * Default logger instance
  */
-export const logger = new LogitronLogger(DEFAULT_CONFIG);
+export const logger = new LogixiaLogger(DEFAULT_CONFIG);
 
 /**
  * Export default configuration for reference

@@ -1,7 +1,7 @@
-import { createLogger, LogLevel } from '../src';
+import { LogixiaLogger, createLogger, LogLevel } from '../src';
 
 /**
- * Example: Custom Log Levels and Colors
+ * Custom levels example for Logixia
  * 
  * This example demonstrates how to:
  * 1. Define custom log levels like 'analytics', 'audit', 'security'

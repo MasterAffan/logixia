@@ -1,6 +1,8 @@
-# Logitron 🚀
+# Logixia 🚀
 
-A next-generation logging library built on top of NestJS Logger with advanced features including trace ID support, structured logging, and flexible formatting.
+Logixia is a next-generation logging library built on top of NestJS Logger with advanced features including trace ID support, structured logging, and flexible formatting.
+
+## Why Logixia?
 
 ## Features
 
@@ -16,9 +18,11 @@ A next-generation logging library built on top of NestJS Logger with advanced fe
 ## Installation
 
 ```bash
-npm install logitron
+npm install logixia
 # or
-yarn add logitron
+yarn add logixia
+# or
+pnpm add logixia
 ```
 
 ## Quick Start
@@ -26,14 +30,14 @@ yarn add logitron
 ### Basic Usage
 
 ```typescript
-import { createLogger } from 'logitron';
+import { createLogger } from 'logixia';
 
 const logger = createLogger({
   appName: 'MyApp',
   environment: 'development'
 });
 
-await logger.info('Hello from Logitron!', { userId: 123 });
+await logger.info('Hello from Logixia!', { userId: 123 });
 await logger.error('Something went wrong', { error: 'details' });
 ```
 
@@ -43,14 +47,14 @@ await logger.error('Something went wrong', { error: 'details' });
 // main.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { LogitronLoggerService } from 'logitron';
+import { LogixiaLoggerService } from 'logixia';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
-  app.useLogger(app.get(LogitronLoggerService));
+  app.useLogger(app.get(LogixiaLoggerService));
   await app.listen(3000);
 }
 
@@ -60,7 +64,7 @@ bootstrap();
 ```typescript
 // app.controller.ts
 import { Controller, Get, Logger } from '@nestjs/common';
-import { getCurrentTraceId } from 'logitron';
+import { getCurrentTraceId } from 'logixia';
 
 @Controller()
 export class AppController {
@@ -73,7 +77,7 @@ export class AppController {
     const traceId = getCurrentTraceId();
     this.logger.log(`Current trace ID: ${traceId}`);
     
-    return 'Hello from Logitron!';
+    return 'Hello from Logixia!';
   }
 }
 ```
@@ -103,7 +107,7 @@ await childLogger.info('User operation completed');
 ## Configuration
 
 ```typescript
-import { createLogger, LogLevel } from 'logitron';
+import { createLogger, LogLevel } from 'logixia';
 
 const logger = createLogger({
   appName: 'MyApp',
@@ -145,7 +149,7 @@ const logger = createLogger({
 
 ```typescript
 // Express/NestJS middleware
-import { traceMiddleware } from 'logitron';
+import { traceMiddleware } from 'logixia';
 
 app.use(traceMiddleware({
   enabled: true,
@@ -159,7 +163,7 @@ app.use(traceMiddleware({
 ## Custom Formatters
 
 ```typescript
-import { JsonFormatter, TextFormatter } from 'logitron';
+import { JsonFormatter, TextFormatter } from 'logixia';
 
 // JSON formatter
 const jsonFormatter = new JsonFormatter({

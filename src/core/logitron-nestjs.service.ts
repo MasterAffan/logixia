@@ -3,14 +3,14 @@
  */
 
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
-import { LogitronLogger } from './logitron-logger';
+import { LogixiaLogger } from './logitron-logger';
 import type { LoggerConfig } from '../types';
 import { LogLevel, LogLevelString } from '../types';
 import { getCurrentTraceId } from '../utils/trace.utils';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class LogitronLoggerService implements LoggerService {
-  private logger: LogitronLogger;
+export class LogixiaLoggerService implements LoggerService {
+  private logger: LogixiaLogger;
   private context?: string;
 
   constructor(config?: LoggerConfig) {
@@ -52,7 +52,7 @@ export class LogitronLoggerService implements LoggerService {
       }
     };
 
-    this.logger = new LogitronLogger({ ...defaultConfig, ...config });
+    this.logger = new LogixiaLogger({ ...defaultConfig, ...config });
   }
 
   /**
@@ -146,9 +146,9 @@ export class LogitronLoggerService implements LoggerService {
   /**
    * Create child logger
    */
-  child(context: string, data?: Record<string, any>): LogitronLoggerService {
-    const childService = new LogitronLoggerService();
-    childService.logger = this.logger.child(context, data) as LogitronLogger;
+  child(context: string, data?: Record<string, any>): LogixiaLoggerService {
+    const childService = new LogixiaLoggerService();
+    childService.logger = this.logger.child(context, data) as LogixiaLogger;
     childService.context = context;
     return childService;
   }
@@ -191,14 +191,14 @@ export class LogitronLoggerService implements LoggerService {
   /**
    * Static factory method for easy instantiation
    */
-  static create(config?: LoggerConfig): LogitronLoggerService {
-    return new LogitronLoggerService(config);
+  static create(config?: LoggerConfig): LogixiaLoggerService {
+    return new LogixiaLoggerService(config);
   }
 
   /**
    * Get the underlying Logitron logger instance
    */
-  getLogger(): LogitronLogger {
+  getLogger(): LogixiaLogger {
     return this.logger;
   }
 }

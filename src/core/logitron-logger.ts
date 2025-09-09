@@ -16,7 +16,7 @@ import {
 import { getCurrentTraceId, generateTraceId } from '../utils/trace.utils';
 import { serializeError, isError, normalizeError } from '../utils/error.utils';
 
-export class LogitronLogger<TConfig extends LoggerConfig<any> = LoggerConfig> implements ILoggerDefault {
+export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> implements ILoggerDefault {
   [K: string]: any; // Allow dynamic custom level methods
   private config: TConfig;
   private context?: string;
@@ -202,7 +202,7 @@ export class LogitronLogger<TConfig extends LoggerConfig<any> = LoggerConfig> im
    * Create child logger
    */
   child(context: string, data?: Record<string, any>): ILogger {
-    const childLogger = new LogitronLogger(this.config, context);
+    const childLogger = new LogixiaLogger(this.config, context);
     if (data) {
       childLogger.contextData = { ...this.contextData, ...data };
     }
@@ -374,7 +374,7 @@ export class LogitronLogger<TConfig extends LoggerConfig<any> = LoggerConfig> im
  * Factory function to create a typed logger with custom levels
  */
 export function createLogger<T extends LoggerConfig<any>>(config: T, context?: string): LoggerWithLevels<T> {
-  const logger = new LogitronLogger<T>(config, context) as any;
+  const logger = new LogixiaLogger<T>(config, context) as any;
   
   // Add custom level methods dynamically
   if (config.levelOptions?.levels) {
