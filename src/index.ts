@@ -1,5 +1,5 @@
 /**
- * Logitron - Advanced TypeScript Logger
+ * Logixia - Advanced TypeScript Logger
  * 
  * A comprehensive logging library with support for:
  * - Multiple output formats (console, file, JSON)
@@ -25,7 +25,7 @@ export * from './utils/error.utils';
 export { LogixiaLogger, LogixiaLoggerService, DEFAULT_CONFIG };
 
 /**
- * Default configuration for Logitron logger
+ * Default configuration for Logixia logger
  */
 const DEFAULT_CONFIG = {
   appName: 'App',
@@ -69,14 +69,14 @@ const DEFAULT_CONFIG = {
 };
 
 /**
- * Create a new Logitron logger instance with TypeScript support for custom levels
+ * Create a new Logixia logger instance with TypeScript support for custom levels
  * @param config - Logger configuration
  * @returns Typed logger instance
  */
 export const createLogger = createLoggerFromCore;
 
 /**
- * Create a new Logitron logger service for NestJS
+ * Create a new Logixia logger service for NestJS
  * @param config - Logger configuration
  * @returns LogixiaLoggerService instance
  */

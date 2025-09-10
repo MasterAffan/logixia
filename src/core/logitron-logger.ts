@@ -1,5 +1,5 @@
 /**
- * Core Logitron Logger implementation
+ * Core Logixia Logger implementation
  */
 
 import {

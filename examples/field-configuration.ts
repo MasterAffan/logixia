@@ -3,7 +3,7 @@
  * Demonstrates how to enable/disable fields and customize their formats
  */
 
-import { LogitronLogger } from '../src/core/logitron-logger';
+import { LogixiaLogger } from '../src/core/logitron-logger';
 import { LoggerConfig, LogColor } from '../src/types';
 
 // Example 1: Basic field configuration
@@ -134,7 +134,7 @@ async function demonstrateFieldConfiguration() {
 
   // Demo 1: Basic configuration
   console.log('1. Basic Field Configuration:');
-  const basicLogger = new LogitronLogger(basicConfig);
+  const basicLogger = new LogixiaLogger(basicConfig);
   await basicLogger.info('This is a basic log message', { userId: 123 });
   await basicLogger.warn('Warning with custom fields');
   await basicLogger.error('Error message', { errorCode: 'E001' });
@@ -142,14 +142,14 @@ async function demonstrateFieldConfiguration() {
 
   // Demo 2: Minimal configuration
   console.log('2. Minimal Field Configuration:');
-  const minimalLogger = new LogitronLogger(minimalConfig);
+  const minimalLogger = new LogixiaLogger(minimalConfig);
   await minimalLogger.info('Minimal log output');
   await minimalLogger.debug('Debug message with minimal fields');
   console.log('');
 
   // Demo 3: Custom configuration
   console.log('3. Custom Levels and Colors:');
-  const customLogger = new LogitronLogger(customConfig);
+  const customLogger = new LogixiaLogger(customConfig);
   await customLogger.info('Custom configuration demo');
   await customLogger.debug('Debug with custom format');
   
@@ -166,7 +166,7 @@ async function demonstrateFieldConfiguration() {
 
   // Demo 4: Field toggling at runtime
   console.log('4. Runtime Field Configuration:');
-  const runtimeLogger = new LogitronLogger({
+  const runtimeLogger = new LogixiaLogger({
     ...basicConfig,
     fields: {
       timestamp: true,

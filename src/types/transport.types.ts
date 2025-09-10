@@ -56,6 +56,58 @@ export interface ConsoleTransportConfig {
   format?: 'json' | 'text';
 }
 
+// Analytics Transport Configuration
+export interface AnalyticsTransportConfig {
+  level?: string;
+  apiKey: string;
+  projectId?: string;
+  endpoint?: string;
+  batchSize?: number;
+  flushInterval?: number;
+  enableUserTracking?: boolean;
+  enableEventTracking?: boolean;
+  customProperties?: Record<string, any>;
+}
+
+// Mixpanel Transport Configuration
+export interface MixpanelTransportConfig extends AnalyticsTransportConfig {
+  token: string;
+  distinct_id?: string;
+  enableSuperProperties?: boolean;
+  superProperties?: Record<string, any>;
+}
+
+// DataDog Transport Configuration
+export interface DataDogTransportConfig extends AnalyticsTransportConfig {
+  apiKey: string;
+  site?: 'datadoghq.com' | 'datadoghq.eu' | 'us3.datadoghq.com' | 'us5.datadoghq.com';
+  service?: string;
+  version?: string;
+  env?: string;
+  enableMetrics?: boolean;
+  enableLogs?: boolean;
+  enableTraces?: boolean;
+}
+
+// Google Analytics Transport Configuration
+export interface GoogleAnalyticsTransportConfig extends AnalyticsTransportConfig {
+  measurementId: string;
+  apiSecret: string;
+  clientId?: string;
+  enableEcommerce?: boolean;
+  enableEnhancedMeasurement?: boolean;
+}
+
+// Segment Transport Configuration
+export interface SegmentTransportConfig extends AnalyticsTransportConfig {
+  writeKey: string;
+  dataPlaneUrl?: string;
+  enableBatching?: boolean;
+  maxBatchSize?: number;
+  flushAt?: number;
+  flushInterval?: number;
+}
+
 // Rotation Configuration
 export interface RotationConfig {
   // Time-based rotation
@@ -83,7 +135,16 @@ export interface TransportConfig {
   console?: ConsoleTransportConfig;
   file?: FileTransportConfig | FileTransportConfig[];
   database?: DatabaseTransportConfig | DatabaseTransportConfig[];
+  analytics?: AnalyticsConfig;
   custom?: ITransport[];
+}
+
+// Analytics Configuration
+export interface AnalyticsConfig {
+  mixpanel?: MixpanelTransportConfig | MixpanelTransportConfig[];
+  datadog?: DataDogTransportConfig | DataDogTransportConfig[];
+  googleAnalytics?: GoogleAnalyticsTransportConfig | GoogleAnalyticsTransportConfig[];
+  segment?: SegmentTransportConfig | SegmentTransportConfig[];
 }
 
 // Async Transport for database operations
@@ -108,7 +169,7 @@ export interface IBatchTransport extends ITransport {
   flush(): Promise<void>;
 }
 
-export type TransportType = 'console' | 'file' | 'database' | 'custom';
+export type TransportType = 'console' | 'file' | 'database' | 'analytics' | 'custom';
 
 export interface TransportMetrics {
   name: string;

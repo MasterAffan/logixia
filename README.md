@@ -86,7 +86,7 @@ const logger = createLogger({
 });
 
 // Basic logging operations
-await logger.info('Application started', { version: '1.0.0', port: 3000 });
+await logger.info('Application started', { version: '1.0.1', port: 3000 });
 await logger.warn('High memory usage detected', { memoryUsage: '85%' });
 await logger.error('Database connection failed', new Error('Connection timeout'));
 ```
@@ -856,7 +856,7 @@ const logger = createLogger({
   appName: 'FieldManagementApp',
   environment: 'development',
   fields: {
-    version: '1.0.0',
+    version: '1.0.1',
     service: 'api-gateway',
     region: 'us-east-1'
   },
@@ -983,6 +983,270 @@ await logger.debug('Debug message');   // Only to file-0
 await logger.info('Info message');     // To file-0 and database
 await logger.warn('Warning message');  // To console, file-0, and database
 await logger.error('Error message');   // To all transports
+```
+
+## Analytics Transports
+
+Logitron supports integration with popular analytics and monitoring platforms to track application events, user behavior, and system metrics.
+
+### Supported Analytics Platforms
+
+- **Mixpanel** - Event tracking and user analytics
+- **DataDog** - Application monitoring and log forwarding
+- **Google Analytics** - Web analytics and event tracking
+- **Segment** - Unified analytics platform
+
+### Mixpanel Integration
+
+Track user events and behavior with Mixpanel:
+
+```typescript
+import { LogixiaLogger } from 'logitron';
+
+const logger = new LogixiaLogger({
+  appName: 'MyApp',
+  transports: {
+    analytics: {
+      mixpanel: {
+        token: 'your-mixpanel-token',
+        apiKey: 'your-mixpanel-api-key',
+        batchSize: 50,
+        flushInterval: 5000,
+        level: 'info'
+      }
+    }
+  }
+});
+
+// Track user events
+logger.info('User signed up', {
+  userId: 'user-123',
+  email: 'user@example.com',
+  plan: 'premium',
+  source: 'landing_page'
+});
+
+logger.info('Feature used', {
+  feature: 'export_data',
+  userId: 'user-123',
+  exportFormat: 'csv'
+});
+```
+
+### DataDog Integration
+
+Send logs and metrics to DataDog for monitoring:
+
+```typescript
+const logger = new LogixiaLogger({
+  appName: 'MyApp',
+  transports: {
+    analytics: {
+      datadog: {
+        apiKey: 'your-datadog-api-key',
+        site: 'datadoghq.com',
+        service: 'my-service',
+        version: '1.0.1',
+        batchSize: 100,
+        flushInterval: 10000,
+        level: 'warn'
+      }
+    }
+  }
+});
+
+// Send application metrics
+logger.error('API Error', {
+  endpoint: '/api/users',
+  statusCode: 500,
+  responseTime: 1200,
+  errorType: 'database_timeout'
+});
+
+logger.warn('High memory usage', {
+  memoryUsage: 85,
+  threshold: 80,
+  service: 'user-service'
+});
+```
+
+### Google Analytics Integration
+
+Track web analytics and custom events:
+
+```typescript
+const logger = new LogixiaLogger({
+  appName: 'MyApp',
+  transports: {
+    analytics: {
+      googleAnalytics: {
+        measurementId: 'G-XXXXXXXXXX',
+        apiSecret: 'your-ga-api-secret',
+        apiKey: 'your-ga-api-key',
+        clientId: 'client-123',
+        batchSize: 25,
+        flushInterval: 3000,
+        level: 'info'
+      }
+    }
+  }
+});
+
+// Track page views and events
+logger.info('Page view', {
+  page: '/dashboard',
+  userId: 'user-123',
+  sessionDuration: 1250,
+  referrer: 'https://google.com'
+});
+
+logger.info('Conversion event', {
+  eventType: 'purchase',
+  value: 99.99,
+  currency: 'USD',
+  transactionId: 'txn-456'
+});
+```
+
+### Segment Integration
+
+Unify analytics across multiple platforms:
+
+```typescript
+const logger = new LogixiaLogger({
+  appName: 'MyApp',
+  transports: {
+    analytics: {
+      segment: {
+        writeKey: 'your-segment-write-key',
+        apiKey: 'your-segment-api-key',
+        dataPlaneUrl: 'https://api.segment.io',
+        batchSize: 75,
+        flushInterval: 7000,
+        level: 'info'
+      }
+    }
+  }
+});
+
+// Track user events
+logger.info('Product purchased', {
+  productId: 'prod-456',
+  productName: 'Premium Plan',
+  price: 29.99,
+  currency: 'USD',
+  userId: 'user-123',
+  category: 'subscription'
+});
+
+logger.info('User identified', {
+  userId: 'user-123',
+  email: 'user@example.com',
+  name: 'John Doe',
+  plan: 'premium'
+});
+```
+
+### Multiple Analytics Providers
+
+Configure multiple analytics providers simultaneously:
+
+```typescript
+const logger = new LogixiaLogger({
+  appName: 'MyApp',
+  transports: {
+    console: { level: 'debug' },
+    analytics: {
+      mixpanel: {
+        token: 'mixpanel-token',
+        apiKey: 'mixpanel-api-key',
+        level: 'info'
+      },
+      datadog: {
+        apiKey: 'datadog-api-key',
+        site: 'datadoghq.com',
+        service: 'my-service',
+        level: 'warn'
+      },
+      segment: {
+        writeKey: 'segment-write-key',
+        apiKey: 'segment-api-key',
+        level: 'info'
+      }
+    }
+  }
+});
+
+// Events will be sent to all configured analytics providers
+logger.info('User action', {
+  action: 'button_click',
+  buttonId: 'signup-cta',
+  userId: 'user-123',
+  timestamp: new Date().toISOString()
+});
+```
+
+### Analytics Configuration Options
+
+#### Common Options
+
+- `apiKey`: API key for authentication
+- `batchSize`: Number of events to batch before sending (default: 50)
+- `flushInterval`: Time in milliseconds between automatic flushes (default: 5000)
+- `level`: Minimum log level to send to analytics platform
+
+#### Platform-Specific Options
+
+**Mixpanel:**
+- `token`: Project token from Mixpanel dashboard
+
+**DataDog:**
+- `site`: DataDog site (e.g., 'datadoghq.com', 'datadoghq.eu')
+- `service`: Service name for log correlation
+- `version`: Application version
+
+**Google Analytics:**
+- `measurementId`: GA4 Measurement ID
+- `apiSecret`: Measurement Protocol API secret
+- `clientId`: Client identifier for user tracking
+
+**Segment:**
+- `writeKey`: Write key from Segment dashboard
+- `dataPlaneUrl`: Custom data plane URL (optional)
+
+### Best Practices
+
+1. **Environment Variables**: Store API keys in environment variables
+2. **Batch Configuration**: Adjust batch sizes based on your traffic volume
+3. **Log Levels**: Use appropriate log levels for different analytics platforms
+4. **Error Handling**: Monitor transport metrics for failed deliveries
+5. **Privacy**: Ensure compliance with data privacy regulations
+
+```typescript
+// Production configuration example
+const logger = new LogixiaLogger({
+  appName: process.env.APP_NAME,
+  environment: process.env.NODE_ENV,
+  transports: {
+    console: { level: 'error' },
+    analytics: {
+      mixpanel: {
+        token: process.env.MIXPANEL_TOKEN,
+        apiKey: process.env.MIXPANEL_API_KEY,
+        batchSize: 100,
+        flushInterval: 10000,
+        level: 'info'
+      },
+      datadog: {
+        apiKey: process.env.DATADOG_API_KEY,
+        site: process.env.DATADOG_SITE || 'datadoghq.com',
+        service: process.env.SERVICE_NAME,
+        version: process.env.APP_VERSION,
+        level: 'warn'
+      }
+    }
+  }
+});
 ```
 
 ### Interactive Transport Configuration
@@ -2531,41 +2795,127 @@ npm run docs:validate
 
 ## Contributing
 
-### Contribution Guidelines
+🚀 **We're building the world's most advanced TypeScript logging library!** 🚀
 
-We welcome contributions from the community. Please review our contribution guidelines:
+Logixia is an **open source project** and we welcome contributions from developers worldwide. Whether you're fixing bugs, adding features, improving documentation, or sharing ideas, your contribution helps make Logixia better for everyone.
 
-1. **Code Standards**: Follow TypeScript best practices and existing code style
-2. **Testing**: Ensure all new features include comprehensive test coverage
-3. **Documentation**: Update documentation for any API changes or new features
-4. **Commit Messages**: Use conventional commit format for clear change tracking
+### Why Contribute?
 
-### Development Workflow
+- 🌟 **Impact**: Help shape the future of logging in TypeScript/Node.js ecosystem
+- 🎯 **Learning**: Work with cutting-edge TypeScript patterns and enterprise architecture
+- 🤝 **Community**: Join a growing community of passionate developers
+- 📈 **Recognition**: Get recognized for your contributions in our contributors hall of fame
+
+### Quick Start for Contributors
 
 ```bash
-# Fork and clone the repository
-git clone https://github.com/your-username/logixia.git
+# 1. Fork and clone the repository
+git clone https://github.com/Logixia/logixia.git
+cd logixia
 
-# Create feature branch
-git checkout -b feature/your-feature-name
-
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Make your changes and add tests
+# 3. Run tests to ensure everything works
 npm test
 
-# Ensure code quality
-npm run lint
-npm run format
-
-# Submit pull request
-git push origin feature/your-feature-name
+# 4. Start developing!
+npm run build:watch
 ```
+
+### Ways to Contribute
+
+#### 🐛 **Bug Reports & Fixes**
+- Found a bug? [Open an issue](https://github.com/Logixia/logixia/issues/new)
+- Want to fix it? Submit a pull request!
+
+#### ✨ **New Features**
+- **Transport Integrations**: Add support for new logging services (Elasticsearch, Splunk, etc.)
+- **Performance Optimizations**: Help us make Logixia even faster
+- **Developer Tools**: Build tools that make Logixia easier to use
+
+#### 📚 **Documentation & Examples**
+- Improve existing documentation
+- Create tutorials and guides
+- Add real-world examples
+- Translate documentation
+
+#### 🧪 **Testing & Quality**
+- Add test cases
+- Improve test coverage
+- Performance benchmarking
+- Security auditing
+
+### Contribution Guidelines
+
+Please read our detailed [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- 📋 **Development setup** and workflow
+- 🎨 **Code style** and standards
+- 🧪 **Testing** requirements
+- 📝 **Documentation** guidelines
+- 🔄 **Pull request** process
+
+### Recognition
+
+All contributors are recognized in:
+- 🏆 **Contributors section** below
+- 📦 **Package.json** contributors field
+- 🎉 **Release notes** for significant contributions
+- 💫 **Special mentions** in our community channels
+
+### Community
+
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/Logixia/logixia/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Logixia/logixia/issues)
+- 📧 **Email**: logixia@example.com
+- 🐦 **Twitter**: [@LogixiaJS](https://twitter.com/LogixiaJS)
+
+### Contributors
+
+Thanks to all our amazing contributors! 🙏
+
+<!-- Contributors will be automatically added here -->
+
+### Hacktoberfest
+
+🎃 **Hacktoberfest participants welcome!** We participate in Hacktoberfest and have issues labeled `hacktoberfest` for easy contribution.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete license terms and conditions.
+📄 **Open Source & Free Forever**
+
+Logixia is proudly **open source** and licensed under the [MIT License](LICENSE). This means:
+
+✅ **Free to use** - Commercial and personal projects  
+✅ **Free to modify** - Customize to your needs  
+✅ **Free to distribute** - Share with your team  
+✅ **No attribution required** - Though we appreciate it!  
+
+### What this means for you:
+
+- 🏢 **Enterprise-friendly**: Use in commercial applications without licensing fees
+- 🔧 **Modification rights**: Fork, modify, and customize as needed
+- 📦 **Distribution rights**: Include in your own packages and applications
+- 🤝 **Community-driven**: Benefit from community contributions and improvements
+
+### MIT License Summary
+
+```
+MIT License
+
+Copyright (c) 2025 Logixia Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+```
+
+See the complete [LICENSE](LICENSE) file for full terms and conditions.
+
+### Third-Party Licenses
+
+Logixia respects all third-party licenses. See [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES.md) for details about dependencies and their licenses.
 
 ## Acknowledgments
 

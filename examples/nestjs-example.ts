@@ -7,17 +7,17 @@
 
 import 'reflect-metadata';
 import { Injectable, Controller, Get, Module } from '@nestjs/common';
-import { LogitronLoggerModule, LogitronLoggerService } from '../src/core/logitron-logger.module';
-import { LogitronLogger } from '../src/core/logitron-logger';
+import { LogixiaLoggerModule, LogixiaLoggerService } from '../src/core/logitron-logger.module';
+import { LogixiaLogger } from '../src/core/logitron-logger';
 import { LoggerConfig } from '../src/types';
 
 // Simplified NestJS-like demonstration
 class DemoUserService {
-  private logger: LogitronLogger;
+  private logger: LogixiaLogger;
 
   constructor() {
-    // Initialize Logitron logger for this service
-    this.logger = new LogitronLogger({
+    // Initialize Logixia logger for this service
+    this.logger = new LogixiaLogger({
       level: 'debug',
       service: 'UserService',
       environment: 'development',
@@ -119,11 +119,11 @@ class DemoUserService {
 @Controller('users')
 class DemoUserController {
   private userService: DemoUserService;
-  private logger: LogitronLogger;
+  private logger: LogixiaLogger;
 
   constructor() {
     this.userService = new DemoUserService();
-    this.logger = new LogitronLogger({
+    this.logger = new LogixiaLogger({
        level: 'info',
        service: 'UserController',
        environment: 'development',
@@ -175,7 +175,7 @@ class DemoUserController {
 // NestJS Application Module using LogitronLoggerModule
 @Module({
   imports: [
-    LogitronLoggerModule.forRoot({
+    LogixiaLoggerModule.forRoot({
       level: 'debug',
       service: 'NestJS-Demo',
       environment: 'development',
@@ -191,12 +191,12 @@ class AppModule {}
 
 // Simulate NestJS application setup
 class DemoNestJSApp {
-  private loggerService: LogitronLoggerService;
+  private loggerService: LogixiaLoggerService;
   private userController: DemoUserController;
 
   constructor() {
-    // Initialize the Logitron NestJS service
-    this.loggerService = new LogitronLoggerService({
+    // Initialize the Logixia NestJS service
+    this.loggerService = new LogixiaLoggerService({
        level: 'debug',
        service: 'NestJSApp',
        environment: 'development',

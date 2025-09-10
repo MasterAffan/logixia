@@ -1,5 +1,5 @@
 /**
- * JSON formatter for Logitron
+ * JSON formatter for Logixia
  */
 
 import { ILogFormatter, LogEntry, LogLevel } from '../types';

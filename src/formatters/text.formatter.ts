@@ -1,5 +1,5 @@
 /**
- * Text formatter for Logitron
+ * Text formatter for Logixia
  */
 
 import { ILogFormatter, LogEntry, LogLevel } from '../types';

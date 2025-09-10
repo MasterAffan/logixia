@@ -4,6 +4,10 @@ import { LogEntry } from '../types';
 import { ConsoleTransport } from './console.transport';
 import { FileTransport } from './file.transport';
 import { DatabaseTransport } from './database.transport';
+import { MixpanelTransport } from './mixpanel.transport';
+import { DataDogTransport } from './datadog.transport';
+import { GoogleAnalyticsTransport } from './google-analytics.transport';
+import { SegmentTransport } from './segment.transport';
 import * as readline from 'readline';
 
 export class TransportManager extends EventEmitter {
@@ -40,6 +44,41 @@ export class TransportManager extends EventEmitter {
         const dbTransport = new DatabaseTransport(dbConfig);
         this.addTransport(dbTransport, `database-${index}`);
       });
+    }
+
+    // Setup analytics transports
+    if (config.analytics) {
+      if (config.analytics.mixpanel) {
+        const mixpanelConfigs = Array.isArray(config.analytics.mixpanel) ? config.analytics.mixpanel : [config.analytics.mixpanel];
+        mixpanelConfigs.forEach((mixpanelConfig, index) => {
+          const mixpanelTransport = new MixpanelTransport(mixpanelConfig);
+          this.addTransport(mixpanelTransport, `mixpanel-${index}`);
+        });
+      }
+      
+      if (config.analytics.datadog) {
+        const datadogConfigs = Array.isArray(config.analytics.datadog) ? config.analytics.datadog : [config.analytics.datadog];
+        datadogConfigs.forEach((datadogConfig, index) => {
+          const datadogTransport = new DataDogTransport(datadogConfig);
+          this.addTransport(datadogTransport, `datadog-${index}`);
+        });
+      }
+      
+      if (config.analytics.googleAnalytics) {
+        const gaConfigs = Array.isArray(config.analytics.googleAnalytics) ? config.analytics.googleAnalytics : [config.analytics.googleAnalytics];
+        gaConfigs.forEach((gaConfig, index) => {
+          const gaTransport = new GoogleAnalyticsTransport(gaConfig);
+          this.addTransport(gaTransport, `google-analytics-${index}`);
+        });
+      }
+      
+      if (config.analytics.segment) {
+        const segmentConfigs = Array.isArray(config.analytics.segment) ? config.analytics.segment : [config.analytics.segment];
+        segmentConfigs.forEach((segmentConfig, index) => {
+          const segmentTransport = new SegmentTransport(segmentConfig);
+          this.addTransport(segmentTransport, `segment-${index}`);
+        });
+      }
     }
 
     // Setup custom transports
@@ -173,6 +212,10 @@ export class TransportManager extends EventEmitter {
     if (transport.name === 'console') return 'console';
     if (transport.name === 'file') return 'file';
     if (transport.name === 'database') return 'database';
+    if (transport.name === 'mixpanel' || transport.name === 'datadog' || 
+        transport.name === 'google-analytics' || transport.name === 'segment') {
+      return 'analytics' as TransportType;
+    }
     return 'custom';
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "logixia",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Logixia - A next-generation logging library with advanced features, custom levels, and TypeScript IntelliSense support",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -38,23 +38,50 @@
   "keywords": [
     "logging",
     "logger",
-    "nestjs",
     "typescript",
-    "trace-id",
+    "nestjs",
+    "express",
     "structured-logging",
+    "trace-id",
     "performance",
-    "middleware"
+    "middleware",
+    "transport",
+    "database-logging",
+    "file-logging",
+    "console-logging",
+    "analytics",
+    "monitoring",
+    "enterprise",
+    "production-ready",
+    "open-source",
+    "mit-license",
+    "async-logging",
+    "batch-processing",
+    "log-rotation",
+    "custom-levels",
+    "child-logger",
+    "error-tracking"
   ],
-  "author": "Your Name",
+  "author": {
+    "name": "Logixia Contributors",
+    "email": "logixia@example.com",
+    "url": "https://github.com/Logixia/logixia"
+  },
+  "contributors": [
+    {
+      "name": "Community Contributors",
+      "url": "https://github.com/Logixia/logixia/graphs/contributors"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/logitron.git"
+    "url": "git+https://github.com/Logixia/logixia.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/logitron/issues"
+    "url": "https://github.com/Logixia/logixia/issues"
   },
-  "homepage": "https://github.com/yourusername/logitron#readme",
+  "homepage": "https://github.com/Logixia/logixia#readme",
   "peerDependencies": {
     "@nestjs/common": "^10.0.0",
     "express": "^4.18.0",

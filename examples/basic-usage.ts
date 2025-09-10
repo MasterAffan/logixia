@@ -33,6 +33,7 @@ async function basicUsageExample() {
         verbose: 'cyan'
       }
     },
+    
   });
 
   // Basic logging

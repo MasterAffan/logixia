@@ -168,7 +168,7 @@ const minimalLogger = new LogitronLogger({
 
 ### Production Configuration
 ```typescript
-const prodLogger = new LogitronLogger({
+const prodLogger = new LogixiaLogger({
   appName: 'ProdApp',
   outputs: ['file'],
   levelOptions: {
@@ -188,7 +188,7 @@ const prodLogger = new LogitronLogger({
 
 ### Development Configuration
 ```typescript
-const devLogger = new LogitronLogger({
+const devLogger = new LogixiaLogger({
   appName: 'DevApp',
   outputs: ['console'],
   levelOptions: {
