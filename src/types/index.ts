@@ -111,6 +111,7 @@ export interface LogEntry {
   timestamp: string;
   level: string;
   appName: string;
+  environment?: string;
   traceId?: string;
   message: string;
   payload?: Record<string, any>;

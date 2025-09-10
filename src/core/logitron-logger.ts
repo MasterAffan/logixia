@@ -15,6 +15,8 @@ import {
 } from '../types';
 import { getCurrentTraceId, generateTraceId } from '../utils/trace.utils';
 import { serializeError, isError, normalizeError } from '../utils/error.utils';
+import { TransportManager } from '../transports/transport.manager';
+import { TransportConfig } from '../types/transport.types';
 
 export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> implements ILoggerDefault {
   [K: string]: any; // Allow dynamic custom level methods
@@ -22,6 +24,7 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
   private context?: string;
   private timers: Map<string, TimingEntry> = new Map();
   private contextData: ContextData = {};
+  private transportManager?: TransportManager;
 
   constructor(config: TConfig, context?: string) {
     const defaultConfig: LoggerConfig = {
@@ -71,6 +74,11 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
     }
     
     this.context = context ?? '';
+    
+    // Initialize transport manager if transports are configured
+    if ((this.config as any).transports) {
+      this.transportManager = new TransportManager((this.config as any).transports);
+    }
     
     // Create dynamic methods for custom levels
     this.createCustomLevelMethods();
@@ -210,6 +218,26 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
   }
 
   /**
+   * Flush all transports
+   */
+  async flush(): Promise<void> {
+    if (this.transportManager) {
+      await this.transportManager.flush();
+    }
+  }
+
+  /**
+   * Check health of all transports
+   */
+  async healthCheck(): Promise<{ healthy: boolean; details: Record<string, any> }> {
+    if (!this.transportManager) {
+      return { healthy: false, details: { error: 'TransportManager not initialized' } };
+    }
+    
+    return await this.transportManager.healthCheck();
+  }
+
+  /**
    * Close logger and cleanup resources
    */
   async close(): Promise<void> {
@@ -221,6 +249,12 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
       });
     }
     this.timers.clear();
+    
+    // Flush and close transport manager
+    if (this.transportManager) {
+      await this.transportManager.flush();
+      await this.transportManager.close();
+    }
   }
 
   /**
@@ -242,6 +276,7 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
       timestamp: new Date().toISOString(),
       level,
       appName: this.config.appName ?? 'App',
+      environment: this.config.environment ?? 'development',
       message,
       ...(this.context && { context: this.context }),
       payload: { ...this.contextData, ...data }
@@ -254,7 +289,7 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
 
     // Format and output log
     const formattedLog = this.formatLog(entry);
-    this.output(formattedLog, level);
+    await this.output(formattedLog, level, entry);
   }
 
   /**
@@ -352,7 +387,19 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
   /**
    * Output log to console or other destinations
    */
-  private output(message: string, level: string): void {
+  private async output(message: string, level: string, entry: LogEntry): Promise<void> {
+    // Use transport manager if available
+    if (this.transportManager) {
+      try {
+        await this.transportManager.write(entry);
+        return;
+      } catch (error) {
+        // Fallback to console if transport fails
+        console.error('Transport write failed:', error);
+      }
+    }
+
+    // Fallback to console output
     switch (level) {
       case LogLevel.ERROR:
         console.error(message);

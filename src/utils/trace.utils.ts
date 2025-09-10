@@ -13,7 +13,7 @@ export const traceStorage = new AsyncLocalStorage<{ traceId: string; [key: strin
  * Default trace ID generator using UUID v4
  */
 export function generateTraceId(): string {
-  return uuidv4().replace(/-/g, '').substring(0, 16);
+  return uuidv4();
 }
 
 /**
