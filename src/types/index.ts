@@ -81,6 +81,21 @@ export interface IBaseLogger {
   setContext(context: string): void;
   getContext(): string | undefined;
   
+  // Field Management Methods
+  enableField(fieldName: string): void;
+  disableField(fieldName: string): void;
+  isFieldEnabled(fieldName: string): boolean;
+  getFieldState(): Record<string, boolean>;
+  resetFieldState(): void;
+  
+  // Transport Level Management Methods
+  enableTransportLevelPrompting(): void;
+  disableTransportLevelPrompting(): void;
+  setTransportLevels(transportId: string, levels: string[]): void;
+  getTransportLevels(transportId: string): string[] | undefined;
+  clearTransportLevelPreferences(): void;
+  getAvailableTransports(): string[];
+  
   child(context: string, data?: Record<string, any>): ILogger;
   close(): Promise<void>;
 }

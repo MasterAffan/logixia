@@ -25,6 +25,7 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
   private timers: Map<string, TimingEntry> = new Map();
   private contextData: ContextData = {};
   private transportManager?: TransportManager;
+  private fieldState: Map<string, boolean> = new Map(); // Track field enable/disable state
 
   constructor(config: TConfig, context?: string) {
     const defaultConfig: LoggerConfig = {
@@ -206,6 +207,98 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
     return this.context;
   }
 
+  // Field Management Methods
+  enableField(fieldName: string): void {
+    this.fieldState.set(fieldName, true);
+    console.log(`✅ Field '${fieldName}' enabled`);
+  }
+
+  disableField(fieldName: string): void {
+    this.fieldState.set(fieldName, false);
+    console.log(`❌ Field '${fieldName}' disabled`);
+  }
+
+  isFieldEnabled(fieldName: string): boolean {
+    // Check fieldState first, then fall back to config
+    if (this.fieldState.has(fieldName)) {
+      return this.fieldState.get(fieldName)!;
+    }
+    
+    // Check config.fields
+    if (this.config.fields && this.config.fields[fieldName as keyof typeof this.config.fields] !== undefined) {
+      const fieldValue = this.config.fields[fieldName as keyof typeof this.config.fields];
+      return fieldValue !== false;
+    }
+    
+    return true; // Default to enabled
+  }
+
+  getFieldState(): Record<string, boolean> {
+    const state: Record<string, boolean> = {};
+    
+    // Get all possible fields from config
+    const allFields = ['timestamp', 'level', 'appName', 'service', 'traceId', 'message', 'payload', 'timeTaken', 'context', 'requestId', 'userId', 'sessionId', 'environment'];
+    
+    allFields.forEach(field => {
+      state[field] = this.isFieldEnabled(field);
+    });
+    
+    return state;
+  }
+
+  resetFieldState(): void {
+    this.fieldState.clear();
+    console.log('🔄 Field state reset to configuration defaults');
+  }
+
+  // Transport Level Management Methods
+  enableTransportLevelPrompting(): void {
+    if (this.transportManager) {
+      this.transportManager.enableLevelPrompting();
+    } else {
+      console.warn('⚠️  Transport manager not initialized');
+    }
+  }
+
+  disableTransportLevelPrompting(): void {
+    if (this.transportManager) {
+      this.transportManager.disableLevelPrompting();
+    } else {
+      console.warn('⚠️  Transport manager not initialized');
+    }
+  }
+
+  setTransportLevels(transportId: string, levels: string[]): void {
+    if (this.transportManager) {
+      this.transportManager.setTransportLevels(transportId, levels);
+    } else {
+      console.warn('⚠️  Transport manager not initialized');
+    }
+  }
+
+  getTransportLevels(transportId: string): string[] | undefined {
+    if (this.transportManager) {
+      return this.transportManager.getTransportLevels(transportId);
+    }
+    console.warn('⚠️  Transport manager not initialized');
+    return undefined;
+  }
+
+  clearTransportLevelPreferences(): void {
+    if (this.transportManager) {
+      this.transportManager.clearTransportLevelPreferences();
+    } else {
+      console.warn('⚠️  Transport manager not initialized');
+    }
+  }
+
+  getAvailableTransports(): string[] {
+    if (this.transportManager) {
+      return this.transportManager.getTransports();
+    }
+    return [];
+  }
+
   /**
    * Create child logger
    */
@@ -304,36 +397,42 @@ export class LogixiaLogger<TConfig extends LoggerConfig<any> = LoggerConfig> imp
     let formatted = '';
 
     // Timestamp
-    if (this.config.format?.timestamp !== false) {
+    if (this.config.format?.timestamp !== false && this.isFieldEnabled('timestamp')) {
       const timestamp = new Date(entry.timestamp).toLocaleString();
       formatted += `[${timestamp}] `;
     }
 
     // Log level
-    const levelName = entry.level;
-    const coloredLevel = this.config.format?.colorize
-      ? this.colorize(levelName.toUpperCase(), this.config.levelOptions?.colors?.[levelName] || 'white')
-      : levelName.toUpperCase();
-    formatted += `[${coloredLevel}] `;
+    if (this.isFieldEnabled('level')) {
+      const levelName = entry.level;
+      const coloredLevel = this.config.format?.colorize
+        ? this.colorize(levelName.toUpperCase(), this.config.levelOptions?.colors?.[levelName] || 'white')
+        : levelName.toUpperCase();
+      formatted += `[${coloredLevel}] `;
+    }
 
     // App name
-    formatted += `[${entry.appName}] `;
+    if (this.isFieldEnabled('appName')) {
+      formatted += `[${entry.appName}] `;
+    }
 
     // Trace ID
-    if (entry.traceId) {
+    if (entry.traceId && this.isFieldEnabled('traceId')) {
       formatted += `[${entry.traceId}] `;
     }
 
     // Context
-    if (entry.context) {
+    if (entry.context && this.isFieldEnabled('context')) {
       formatted += `[${entry.context}] `;
     }
 
     // Message
-    formatted += entry.message;
+    if (this.isFieldEnabled('message')) {
+      formatted += entry.message;
+    }
 
     // Payload
-    if (entry.payload && Object.keys(entry.payload).length > 0) {
+    if (entry.payload && Object.keys(entry.payload).length > 0 && this.isFieldEnabled('payload')) {
       formatted += ` ${JSON.stringify(entry.payload)}`;
     }
 

@@ -4,11 +4,14 @@ import { LogEntry } from '../types';
 import { ConsoleTransport } from './console.transport';
 import { FileTransport } from './file.transport';
 import { DatabaseTransport } from './database.transport';
+import * as readline from 'readline';
 
 export class TransportManager extends EventEmitter {
   private transports: Map<string, ITransport> = new Map();
   private metrics: Map<string, TransportMetrics> = new Map();
   private isShuttingDown = false;
+  private transportLevelPreferences: Map<string, string[]> = new Map(); // Store user preferences for transport levels
+  private promptForLevels: boolean = false; // Flag to enable/disable prompting
 
   constructor(config: TransportConfig = {}) {
     super();
@@ -101,8 +104,13 @@ export class TransportManager extends EventEmitter {
     const writePromises: Promise<void>[] = [];
 
     for (const [id, transport] of this.transports) {
+      // Configure transport levels if prompting is enabled
+      if (this.promptForLevels && !this.transportLevelPreferences.has(id)) {
+        await this.configureTransportLevels(id);
+      }
+      
       // Check if transport should handle this log level
-      if (!this.shouldTransportHandle(transport, transportEntry.level)) {
+      if (!this.shouldTransportHandle(transport, transportEntry.level, id)) {
         continue;
       }
 
@@ -142,7 +150,13 @@ export class TransportManager extends EventEmitter {
     }
   }
 
-  private shouldTransportHandle(transport: ITransport, level: string): boolean {
+  private shouldTransportHandle(transport: ITransport, level: string, transportId?: string): boolean {
+    // Check user preferences first if transport ID is provided
+    if (transportId && this.transportLevelPreferences.has(transportId)) {
+      const allowedLevels = this.transportLevelPreferences.get(transportId)!;
+      return allowedLevels.includes(level.toLowerCase());
+    }
+    
     if (!transport.level) return true;
     
     // Simple level comparison - you might want to implement proper level hierarchy
@@ -283,19 +297,83 @@ export class TransportManager extends EventEmitter {
 
     for (const [id, transport] of this.transports) {
       try {
-        if (this.isAsyncTransport(transport)) {
-          const isReady = await transport.isReady();
-          details[id] = { ready: isReady, type: this.getTransportType(transport) };
-          if (!isReady) healthy = false;
-        } else {
-          details[id] = { ready: true, type: this.getTransportType(transport) };
-        }
+        const isReady = await this.isTransportReady(id);
+        details[id] = { ready: isReady, metrics: this.metrics.get(id) };
+        if (!isReady) healthy = false;
       } catch (error) {
-        details[id] = { ready: false, error: (error as Error).message, type: this.getTransportType(transport) };
+        details[id] = { error: error instanceof Error ? error.message : 'Unknown error' };
         healthy = false;
       }
     }
 
     return { healthy, details };
+  }
+
+  // Transport Level Configuration Methods
+  enableLevelPrompting(): void {
+    this.promptForLevels = true;
+    console.log('🔧 Transport level prompting enabled');
+  }
+
+  disableLevelPrompting(): void {
+    this.promptForLevels = false;
+    console.log('🔧 Transport level prompting disabled');
+  }
+
+  async promptUserForTransportLevels(transportId: string): Promise<string[]> {
+    const availableLevels = ['error', 'warn', 'info', 'debug', 'trace', 'verbose'];
+    
+    return new Promise((resolve) => {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
+
+      console.log(`\n📝 Configure log levels for transport '${transportId}'`);
+      console.log('Available levels:', availableLevels.join(', '));
+      console.log('Enter levels separated by commas (e.g., error,warn,info) or "all" for all levels:');
+      
+      rl.question('> ', (answer) => {
+        rl.close();
+        
+        if (answer.toLowerCase().trim() === 'all') {
+          resolve(availableLevels);
+        } else {
+          const selectedLevels = answer
+            .split(',')
+            .map(level => level.trim().toLowerCase())
+            .filter(level => availableLevels.includes(level));
+          
+          if (selectedLevels.length === 0) {
+            console.log('⚠️  No valid levels selected, using all levels');
+            resolve(availableLevels);
+          } else {
+            console.log(`✅ Selected levels for ${transportId}:`, selectedLevels.join(', '));
+            resolve(selectedLevels);
+          }
+        }
+      });
+    });
+  }
+
+  async configureTransportLevels(transportId: string): Promise<void> {
+    if (this.promptForLevels && !this.transportLevelPreferences.has(transportId)) {
+      const selectedLevels = await this.promptUserForTransportLevels(transportId);
+      this.transportLevelPreferences.set(transportId, selectedLevels);
+    }
+  }
+
+  setTransportLevels(transportId: string, levels: string[]): void {
+    this.transportLevelPreferences.set(transportId, levels);
+    console.log(`🎯 Transport '${transportId}' configured for levels:`, levels.join(', '));
+  }
+
+  getTransportLevels(transportId: string): string[] | undefined {
+    return this.transportLevelPreferences.get(transportId);
+  }
+
+  clearTransportLevelPreferences(): void {
+    this.transportLevelPreferences.clear();
+    console.log('🧹 Transport level preferences cleared');
   }
 }
