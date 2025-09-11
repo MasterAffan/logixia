@@ -3,7 +3,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { runWithTraceId, getCurrentTraceId, extractTraceId } from '../utils/trace.utils';
-import { TraceIdConfig } from '../types';
+import type { TraceIdConfig } from '../types';
 
 @Injectable()
 export class KafkaTraceInterceptor implements NestInterceptor {
