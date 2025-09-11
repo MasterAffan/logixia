@@ -309,6 +309,130 @@ export class UserService {
 }
 ```
 
+## Interceptors
+
+### Kafka and WebSocket Interceptors
+
+Logixia provides specialized interceptors for Kafka and WebSocket applications to automatically extract and propagate trace IDs across distributed systems.
+
+#### Kafka Trace Interceptor
+
+Automatically extract trace IDs from Kafka messages and add them to the logging context:
+
+```typescript
+import { KafkaTraceInterceptor } from 'logixia';
+import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
+
+@Controller('kafka')
+@UseInterceptors(KafkaTraceInterceptor)
+export class KafkaController {
+  @Post('process-message')
+  async processMessage(@Body() message: any) {
+    // Trace ID is automatically extracted from message headers or body
+    // and added to the logging context
+    await this.logger.info('Processing Kafka message', {
+      messageId: message.id,
+      topic: message.topic
+    });
+    
+    return { status: 'processed' };
+  }
+}
+```
+
+#### WebSocket Trace Interceptor
+
+Extract trace IDs from WebSocket messages and maintain trace context across WebSocket connections:
+
+```typescript
+import { WebSocketTraceInterceptor } from 'logixia';
+import { WebSocketGateway, SubscribeMessage, UseInterceptors } from '@nestjs/websockets';
+
+@WebSocketGateway()
+@UseInterceptors(WebSocketTraceInterceptor)
+export class ChatGateway {
+  @SubscribeMessage('message')
+  async handleMessage(client: any, payload: any) {
+    // Trace ID is automatically extracted from payload headers or query parameters
+    await this.logger.info('WebSocket message received', {
+      clientId: client.id,
+      messageType: payload.type
+    });
+    
+    return { event: 'response', data: 'Message processed' };
+  }
+}
+```
+
+#### Configuration
+
+Configure interceptors through the LogixiaLoggerModule:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { LogixiaLoggerModule } from 'logixia';
+
+@Module({
+  imports: [
+    LogixiaLoggerModule.forRoot({
+      appName: 'MyApplication',
+      environment: 'production',
+      traceId: {
+        enabled: true,
+        extractor: {
+          header: ['x-trace-id', 'x-request-id'],
+          query: ['traceId'],
+          body: ['traceId', 'requestId']
+        }
+      },
+      transports: {
+        console: { level: 'info' },
+        file: { filename: './logs/app.log', level: 'debug' }
+      }
+    })
+  ]
+})
+export class AppModule {}
+```
+
+#### Key Features
+
+- **Automatic Trace Extraction**: Extracts trace IDs from headers, query parameters, or message body
+- **Enable/Disable Support**: Can be enabled or disabled through configuration
+- **No Auto-Generation**: Only uses existing trace IDs, doesn't generate new ones
+- **Flexible Configuration**: Supports multiple extraction sources and patterns
+- **Performance Optimized**: Minimal overhead when disabled
+
+#### Usage with Custom Configuration
+
+```typescript
+// Async configuration with custom trace settings
+LogixiaLoggerModule.forRootAsync({
+  useFactory: async (configService: ConfigService) => ({
+    appName: configService.get('APP_NAME'),
+    environment: configService.get('NODE_ENV'),
+    traceId: {
+      enabled: configService.get('TRACE_ENABLED', true),
+      extractor: {
+        header: ['x-correlation-id', 'x-trace-id'],
+        query: ['correlationId'],
+        body: ['traceId']
+      }
+    },
+    transports: {
+      console: { level: 'info' },
+      database: {
+        type: 'mongodb',
+        connectionString: configService.get('MONGODB_URI'),
+        database: 'logs',
+        collection: 'application_logs'
+      }
+    }
+  }),
+  inject: [ConfigService]
+})
+```
+
 ## Express Integration
 
 Integrate comprehensive logging into Express applications with automatic request tracking and performance monitoring:
