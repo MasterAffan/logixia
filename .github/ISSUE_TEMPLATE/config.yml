@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General Discussion
+    url: https://github.com/Logixia/logixia/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://github.com/Logixia/logixia#readme
+    about: Check our comprehensive documentation and guides
+  - name: 🔍 Search Issues
+    url: https://github.com/Logixia/logixia/issues?q=is%3Aissue
+    about: Search existing issues before creating a new one
+  - name: 🎃 Hacktoberfest Issues
+    url: https://github.com/Logixia/logixia/issues?q=is%3Aissue+is%3Aopen+label%3Ahacktoberfest
+    about: Find Hacktoberfest-labeled issues perfect for contributing

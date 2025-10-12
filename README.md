@@ -6,6 +6,10 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
+[![Hacktoberfest](https://img.shields.io/badge/Hacktoberfest-2025-orange.svg)](https://hacktoberfest.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Good First Issues](https://img.shields.io/github/issues/Logixia/logixia/good%20first%20issue?color=7057ff&label=good%20first%20issues)](https://github.com/Logixia/logixia/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![Contributors](https://img.shields.io/github/contributors/Logixia/logixia.svg)](https://github.com/Logixia/logixia/graphs/contributors)
 
 ## Features
 
@@ -307,6 +311,130 @@ export class UserService {
     });
   }
 }
+```
+
+## Interceptors
+
+### Kafka and WebSocket Interceptors
+
+Logixia provides specialized interceptors for Kafka and WebSocket applications to automatically extract and propagate trace IDs across distributed systems.
+
+#### Kafka Trace Interceptor
+
+Automatically extract trace IDs from Kafka messages and add them to the logging context:
+
+```typescript
+import { KafkaTraceInterceptor } from 'logixia';
+import { Controller, Post, Body, UseInterceptors } from '@nestjs/common';
+
+@Controller('kafka')
+@UseInterceptors(KafkaTraceInterceptor)
+export class KafkaController {
+  @Post('process-message')
+  async processMessage(@Body() message: any) {
+    // Trace ID is automatically extracted from message headers or body
+    // and added to the logging context
+    await this.logger.info('Processing Kafka message', {
+      messageId: message.id,
+      topic: message.topic
+    });
+    
+    return { status: 'processed' };
+  }
+}
+```
+
+#### WebSocket Trace Interceptor
+
+Extract trace IDs from WebSocket messages and maintain trace context across WebSocket connections:
+
+```typescript
+import { WebSocketTraceInterceptor } from 'logixia';
+import { WebSocketGateway, SubscribeMessage, UseInterceptors } from '@nestjs/websockets';
+
+@WebSocketGateway()
+@UseInterceptors(WebSocketTraceInterceptor)
+export class ChatGateway {
+  @SubscribeMessage('message')
+  async handleMessage(client: any, payload: any) {
+    // Trace ID is automatically extracted from payload headers or query parameters
+    await this.logger.info('WebSocket message received', {
+      clientId: client.id,
+      messageType: payload.type
+    });
+    
+    return { event: 'response', data: 'Message processed' };
+  }
+}
+```
+
+#### Configuration
+
+Configure interceptors through the LogixiaLoggerModule:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { LogixiaLoggerModule } from 'logixia';
+
+@Module({
+  imports: [
+    LogixiaLoggerModule.forRoot({
+      appName: 'MyApplication',
+      environment: 'production',
+      traceId: {
+        enabled: true,
+        extractor: {
+          header: ['x-trace-id', 'x-request-id'],
+          query: ['traceId'],
+          body: ['traceId', 'requestId']
+        }
+      },
+      transports: {
+        console: { level: 'info' },
+        file: { filename: './logs/app.log', level: 'debug' }
+      }
+    })
+  ]
+})
+export class AppModule {}
+```
+
+#### Key Features
+
+- **Automatic Trace Extraction**: Extracts trace IDs from headers, query parameters, or message body
+- **Enable/Disable Support**: Can be enabled or disabled through configuration
+- **No Auto-Generation**: Only uses existing trace IDs, doesn't generate new ones
+- **Flexible Configuration**: Supports multiple extraction sources and patterns
+- **Performance Optimized**: Minimal overhead when disabled
+
+#### Usage with Custom Configuration
+
+```typescript
+// Async configuration with custom trace settings
+LogixiaLoggerModule.forRootAsync({
+  useFactory: async (configService: ConfigService) => ({
+    appName: configService.get('APP_NAME'),
+    environment: configService.get('NODE_ENV'),
+    traceId: {
+      enabled: configService.get('TRACE_ENABLED', true),
+      extractor: {
+        header: ['x-correlation-id', 'x-trace-id'],
+        query: ['correlationId'],
+        body: ['traceId']
+      }
+    },
+    transports: {
+      console: { level: 'info' },
+      database: {
+        type: 'mongodb',
+        connectionString: configService.get('MONGODB_URI'),
+        database: 'logs',
+        collection: 'application_logs'
+      }
+    }
+  }),
+  inject: [ConfigService]
+})
 ```
 
 ## Express Integration
@@ -987,7 +1115,7 @@ await logger.error('Error message');   // To all transports
 
 ## Analytics Transports
 
-Logitron supports integration with popular analytics and monitoring platforms to track application events, user behavior, and system metrics.
+Logixia supports integration with popular analytics and monitoring platforms to track application events, user behavior, and system metrics.
 
 ### Supported Analytics Platforms
 
@@ -1001,7 +1129,7 @@ Logitron supports integration with popular analytics and monitoring platforms to
 Track user events and behavior with Mixpanel:
 
 ```typescript
-import { LogixiaLogger } from 'logitron';
+import { LogixiaLogger } from 'logixia';
 
 const logger = new LogixiaLogger({
   appName: 'MyApp',
@@ -2799,12 +2927,23 @@ npm run docs:validate
 
 Logixia is an **open source project** and we welcome contributions from developers worldwide. Whether you're fixing bugs, adding features, improving documentation, or sharing ideas, your contribution helps make Logixia better for everyone.
 
+### 🎃 Hacktoberfest 2024
+
+**We're excited to participate in Hacktoberfest 2024!** 
+
+- 🏷️ Look for issues labeled with `hacktoberfest` for contribution opportunities
+- 🌟 Issues labeled `good first issue` are perfect for newcomers
+- 📋 All contributions must follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+- ✅ Quality over quantity - we review all PRs carefully
+- 🎯 Focus on meaningful contributions that improve the project
+
 ### Why Contribute?
 
 - 🌟 **Impact**: Help shape the future of logging in TypeScript/Node.js ecosystem
 - 🎯 **Learning**: Work with cutting-edge TypeScript patterns and enterprise architecture
 - 🤝 **Community**: Join a growing community of passionate developers
 - 📈 **Recognition**: Get recognized for your contributions in our contributors hall of fame
+- 🎃 **Hacktoberfest**: Earn your Hacktoberfest swag by contributing to open source!
 
 ### Quick Start for Contributors
 
@@ -2877,9 +3016,15 @@ Thanks to all our amazing contributors! 🙏
 
 <!-- Contributors will be automatically added here -->
 
-### Hacktoberfest
+### 🎃 Hacktoberfest Ready!
 
-🎃 **Hacktoberfest participants welcome!** We participate in Hacktoberfest and have issues labeled `hacktoberfest` for easy contribution.
+**We're officially participating in Hacktoberfest 2024!** 
+
+- 🏷️ **Labeled Issues**: Look for `hacktoberfest` and `good first issue` labels
+- 📋 **Quality Focus**: We prioritize meaningful contributions over quantity
+- 🤝 **Welcoming Community**: New contributors are always welcome
+- 📚 **Comprehensive Docs**: Check our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
+- 🎯 **Clear Scope**: Well-defined issues with clear acceptance criteria
 
 ## License
 
