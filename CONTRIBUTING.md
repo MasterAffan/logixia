@@ -1,5 +1,7 @@
 # Contributing to Logixia
 
+🎉 **Welcome to Logixia!** We're excited that you're interested in contributing to our advanced logging library for Node.js and TypeScript applications.
+
 We love your input! We want to make contributing to Logixia as easy and transparent as possible, whether it's:
 
 - Reporting a bug
@@ -7,6 +9,23 @@ We love your input! We want to make contributing to Logixia as easy and transpar
 - Submitting a fix
 - Proposing new features
 - Becoming a maintainer
+
+## 🎃 Hacktoberfest 2025
+
+We're participating in **Hacktoberfest 2025**! This is a great opportunity for new contributors to get involved.
+
+### For Hacktoberfest Contributors:
+- Look for issues labeled with `hacktoberfest` and `good first issue`
+- Read this entire contributing guide before starting
+- Join our community discussions for help and guidance
+- Quality over quantity - we value meaningful contributions
+- All skill levels welcome - from documentation to complex features
+
+### Hacktoberfest Guidelines:
+- **No spam PRs** - Low-quality PRs will be marked as `spam` or `invalid`
+- **Follow our standards** - Ensure your code meets our quality requirements
+- **Test your changes** - All PRs must include appropriate tests
+- **Be patient** - Maintainers will review PRs as quickly as possible
 
 ## We Develop with GitHub
 
@@ -30,6 +49,15 @@ In short, when you submit code changes, your submissions are understood to be un
 ## Report bugs using GitHub's [issue tracker](https://github.com/Logixia/logixia/issues)
 
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/Logixia/logixia/issues/new); it's that easy!
+
+### 🐛 Bug Report Template
+When reporting bugs, please include:
+- **Environment**: Node.js version, OS, package version
+- **Steps to reproduce**: Clear, numbered steps
+- **Expected behavior**: What should happen
+- **Actual behavior**: What actually happens
+- **Code sample**: Minimal reproducible example
+- **Error messages**: Full error stack traces
 
 ## Write bug reports with detail, background, and sample code
 
@@ -176,17 +204,45 @@ Contributors will be recognized in:
 - **Discussions**: Use GitHub Discussions for questions
 - **Community**: Join our community channels
 
+## 🚀 First-Time Contributors
+
+New to open source? No problem! Here's how to get started:
+
+1. **Start small**: Look for `good first issue` labels
+2. **Read the code**: Explore the codebase to understand the structure
+3. **Ask questions**: Use GitHub Discussions or issues for help
+4. **Follow examples**: Check existing code patterns before implementing
+5. **Test locally**: Always test your changes before submitting
+
+### Good First Issues Include:
+- Documentation improvements
+- Adding examples
+- Fixing typos
+- Adding tests for existing features
+- Improving error messages
+
 ## Areas for Contribution
 
 We especially welcome contributions in:
 
-- **New Transport Integrations**: Add support for more logging services
-- **Performance Improvements**: Optimize logging performance
-- **Documentation**: Improve docs and examples
-- **Testing**: Add more comprehensive tests
-- **TypeScript Types**: Improve type definitions
-- **Examples**: Create more real-world examples
-- **Bug Fixes**: Fix reported issues
+### 🔧 Code Contributions
+- **New Transport Integrations**: Add support for more logging services (Elasticsearch, Splunk, etc.)
+- **Performance Improvements**: Optimize logging performance and memory usage
+- **TypeScript Types**: Improve type definitions and type safety
+- **Bug Fixes**: Fix reported issues and edge cases
+- **Security**: Improve security features and vulnerability fixes
+
+### 📚 Documentation & Examples
+- **Documentation**: Improve docs, API references, and guides
+- **Examples**: Create more real-world examples and use cases
+- **Tutorials**: Write step-by-step tutorials for common scenarios
+- **README improvements**: Better getting started guides
+
+### 🧪 Testing & Quality
+- **Testing**: Add more comprehensive tests and edge cases
+- **Integration Tests**: Test with real-world scenarios
+- **Performance Tests**: Benchmark and performance testing
+- **Code Quality**: Improve linting rules and code standards
 
 ## Release Process
 
@@ -203,3 +259,12 @@ By contributing, you agree that your contributions will be licensed under the MI
 ---
 
 Thank you for contributing to Logixia! 🚀
+
+## 📞 Contact & Support
+
+- **GitHub Issues**: For bugs and feature requests
+- **GitHub Discussions**: For questions and community chat
+- **Email**: For security issues or private matters
+- **Documentation**: Check our comprehensive docs and examples
+
+**Happy Contributing!** 🎉

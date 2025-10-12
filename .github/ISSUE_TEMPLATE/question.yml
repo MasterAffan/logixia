@@ -1,0 +1,112 @@
+name: ❓ Question / Help
+description: Ask a question or get help using Logixia
+title: "[Question]: "
+labels: ["question", "help wanted"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need help with Logixia? We're here to help! ❓
+        
+        Before asking, please:
+        - Check the documentation and examples
+        - Search existing issues and discussions
+        - Try to provide a minimal example
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What do you need help with?
+      placeholder: |
+        Ask your question clearly and concisely. Include:
+        - What you're trying to achieve
+        - What you've tried so far
+        - Where you're stuck
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide context about your use case
+      placeholder: |
+        - What type of application are you building?
+        - What logging requirements do you have?
+        - Are you migrating from another logging library?
+        - Any specific constraints or requirements?
+    validations:
+      required: false
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Current Code (Optional)
+      description: Share your current code if relevant
+      render: typescript
+      placeholder: |
+        import { Logixia } from 'logixia';
+        
+        // Your current code here
+        const logger = new Logixia({
+          // your configuration
+        });
+    validations:
+      required: false
+
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What You've Tried
+      description: What have you already attempted?
+      placeholder: |
+        - Documentation sections you've read
+        - Code examples you've tried
+        - Error messages you've encountered
+        - Other approaches you've attempted
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (If Relevant)
+      description: Your environment details
+      placeholder: |
+        - OS: [e.g. macOS 13.0, Ubuntu 20.04, Windows 11]
+        - Node.js version: [e.g. 18.17.0]
+        - Logixia version: [e.g. 1.0.0]
+        - Framework: [e.g. Express, NestJS, Next.js]
+    validations:
+      required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: How urgent is this question for you?
+      options:
+        - Low - Just curious
+        - Medium - Would like to know
+        - High - Blocking my development
+        - Critical - Production issue
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have checked the documentation and examples
+          required: true
+        - label: I have provided enough context for others to help
+          required: true
+        - label: This is a question about using Logixia (not a bug report or feature request)
+          required: true

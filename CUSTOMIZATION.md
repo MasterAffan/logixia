@@ -1,9 +1,9 @@
-# Logitron Customization Guide
+# Logixia Customization Guide
 
 ## Log Level Customization
 
 ### Predefined Log Levels
-Logitron comes with predefined log levels:
+Logixia comes with predefined log levels:
 - `error` (0) - Highest priority
 - `warn` (1)
 - `info` (2) - Default level
@@ -15,7 +15,7 @@ Logitron comes with predefined log levels:
 You can define custom log levels with custom colors:
 
 ```typescript
-const logger = new LogitronLogger({
+const logger = new LogixiaLogger({
   appName: 'MyApp',
   outputs: ['console'],
   levelOptions: {
@@ -66,7 +66,7 @@ By default, Logitron includes these fields in log output:
 You can control which fields appear in your logs:
 
 ```typescript
-const logger = new LogitronLogger({
+const logger = new LogixiaLogger({
   appName: 'MyApp',
   outputs: ['console'],
   fields: {
@@ -85,7 +85,7 @@ const logger = new LogitronLogger({
 You can customize the format of individual fields:
 
 ```typescript
-const logger = new LogitronLogger({
+const logger = new LogixiaLogger({
   appName: 'MyApp',
   outputs: ['console'],
   fields: {
@@ -130,7 +130,7 @@ logger.toggleField('traceId', true);   // Show trace ID field
 
 ### Custom Color Schemes
 ```typescript
-const logger = new LogitronLogger({
+const logger = new LogixiaLogger({
   appName: 'MyApp',
   outputs: ['console'],
   levelOptions: {
@@ -154,7 +154,7 @@ const logger = new LogitronLogger({
 
 ### Minimal Configuration
 ```typescript
-const minimalLogger = new LogitronLogger({
+const minimalLogger = new LogixiaLogger({
   appName: 'MinimalApp',
   outputs: ['console'],
   fields: {

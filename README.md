@@ -6,6 +6,10 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
+[![Hacktoberfest](https://img.shields.io/badge/Hacktoberfest-2025-orange.svg)](https://hacktoberfest.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Good First Issues](https://img.shields.io/github/issues/Logixia/logixia/good%20first%20issue?color=7057ff&label=good%20first%20issues)](https://github.com/Logixia/logixia/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![Contributors](https://img.shields.io/github/contributors/Logixia/logixia.svg)](https://github.com/Logixia/logixia/graphs/contributors)
 
 ## Features
 
@@ -1111,7 +1115,7 @@ await logger.error('Error message');   // To all transports
 
 ## Analytics Transports
 
-Logitron supports integration with popular analytics and monitoring platforms to track application events, user behavior, and system metrics.
+Logixia supports integration with popular analytics and monitoring platforms to track application events, user behavior, and system metrics.
 
 ### Supported Analytics Platforms
 
@@ -1125,7 +1129,7 @@ Logitron supports integration with popular analytics and monitoring platforms to
 Track user events and behavior with Mixpanel:
 
 ```typescript
-import { LogixiaLogger } from 'logitron';
+import { LogixiaLogger } from 'logixia';
 
 const logger = new LogixiaLogger({
   appName: 'MyApp',
@@ -2923,12 +2927,23 @@ npm run docs:validate
 
 Logixia is an **open source project** and we welcome contributions from developers worldwide. Whether you're fixing bugs, adding features, improving documentation, or sharing ideas, your contribution helps make Logixia better for everyone.
 
+### 🎃 Hacktoberfest 2024
+
+**We're excited to participate in Hacktoberfest 2024!** 
+
+- 🏷️ Look for issues labeled with `hacktoberfest` for contribution opportunities
+- 🌟 Issues labeled `good first issue` are perfect for newcomers
+- 📋 All contributions must follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+- ✅ Quality over quantity - we review all PRs carefully
+- 🎯 Focus on meaningful contributions that improve the project
+
 ### Why Contribute?
 
 - 🌟 **Impact**: Help shape the future of logging in TypeScript/Node.js ecosystem
 - 🎯 **Learning**: Work with cutting-edge TypeScript patterns and enterprise architecture
 - 🤝 **Community**: Join a growing community of passionate developers
 - 📈 **Recognition**: Get recognized for your contributions in our contributors hall of fame
+- 🎃 **Hacktoberfest**: Earn your Hacktoberfest swag by contributing to open source!
 
 ### Quick Start for Contributors
 
@@ -3001,9 +3016,15 @@ Thanks to all our amazing contributors! 🙏
 
 <!-- Contributors will be automatically added here -->
 
-### Hacktoberfest
+### 🎃 Hacktoberfest Ready!
 
-🎃 **Hacktoberfest participants welcome!** We participate in Hacktoberfest and have issues labeled `hacktoberfest` for easy contribution.
+**We're officially participating in Hacktoberfest 2024!** 
+
+- 🏷️ **Labeled Issues**: Look for `hacktoberfest` and `good first issue` labels
+- 📋 **Quality Focus**: We prioritize meaningful contributions over quantity
+- 🤝 **Welcoming Community**: New contributors are always welcome
+- 📚 **Comprehensive Docs**: Check our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
+- 🎯 **Clear Scope**: Well-defined issues with clear acceptance criteria
 
 ## License
 
